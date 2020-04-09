@@ -3,10 +3,43 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Requests App</title>    
+    <title>Requests App</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
   </head>
   <body>
-    <h1>Requests App</h1>
+    
+    <!-- new request modal -->
+    <div class="new-request">
+      <div class="modal">
+        <h2>Request a Tutorial</h2>
+        <form>
+          <input type="text" name="request" placeholder="Request...">
+          <button>Submit Request</button>
+          <p class="error"></p>
+        </form>
+      </div>
+    </div>
+    
+    <header>
+      <nav>
+        <a class="add-request">add request</a>
+        <a class="sign-out">sign out</a>
+      </nav>
+    </header>
+
+    <section class="content">
+      <h1>Tutorial Requests</h1>
+      <ul class="request-list"> 
+        <li>
+          <span class="text">Laravel 6 tutorial</span>
+          <div>
+            <span class="votes">125</span>
+            <i class="material-icons upvote">arrow_upward</i>
+          </div>
+        </li>
+      </ul>
+    </section>
     
     <!-- Firebase core SDK -->
     <script defer src="/__/firebase/7.13.2/firebase-app.js"></script>
@@ -15,6 +48,7 @@
     <script defer src="/__/firebase/7.13.2/firebase-firestore.js"></script>
     <script defer src="/__/firebase/7.13.2/firebase-functions.js"></script>
     <!-- initialize Firebase -->
-    <script defer src="/__/firebase/init.js"></script>    
+    <script defer src="/__/firebase/init.js"></script>
+    <script src="js/app.js"></script> 
   </body>
 </html>
