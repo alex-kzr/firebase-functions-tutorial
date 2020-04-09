@@ -11,3 +11,8 @@ exports.randomNumber = functions.https.onRequest((request, response) => {
 exports.toTheGrooz = functions.https.onRequest((request, response) => {
     response.redirect('https://grooz.io');
 })
+
+// http callable function
+exports.sayHello = functions.https.onCall((data, context) => {
+    return `hello, ${data.name}`;
+});
