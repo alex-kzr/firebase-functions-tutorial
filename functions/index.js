@@ -1,3 +1,4 @@
+/* eslint-disable promise/no-nesting */
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
@@ -39,5 +40,43 @@ exports.addRequest = functions.https.onCall((data, context) => {
             'internal',
             'request not added'
         );
+    });
+});
+
+//upvote callable function
+exports.upvote = functions.https.onCall((data,context) => {
+    
+    // check auth state
+    if(!context.auth){
+        throw new functions.https.HttpsError(
+            'unauthenticated',
+            'only authenticated users can add request'
+        );
+    }
+
+    // get refs for user doc & request doc
+    const user = admin.firestore().collection('users').doc(context.auth.uid);
+    const request = admin.firestore().collection('requests').doc(data.id);
+    
+    return user.get().then(doc => {
+        // check user hasn't already upvoted the request
+        if(doc.data().upvotedOn.includes(data.id)){
+            throw new functions.https.HttpsError(
+                'failed-precondition',
+                'You can only upvote request once'
+            );
+        }
+
+        // update the array in user document
+        return user.update({
+            upvotedOn: [...doc.data().upvotedOn, data.id]
+        }).then(() => {
+            // update votes on the request
+            return request.update({
+                upvotes: admin.firestore.FieldValue.increment(1)
+            }).then(() => {
+                return 'upvoteOn incremented';
+            });
+        });
     });
 });
