@@ -1,24 +1,28 @@
 var app = new Vue({
     el: '#app',
     data: {
-        requests: []
+        requests: [],
+    },
+    methods: {
+        upvoteRequest(id){
+            const upvote = firebase.functions().httpsCallable('upvote');
+            upvote({ id })
+                .catch(err => {
+                    console.log(err.message);
+                });
+        }
     },
     mounted(){
-        const ref = firebase.firestore().collection('requests');
-        let requests = [];
+        const ref = firebase.firestore().collection('requests').orderBy('upvotes', 'desc');
         ref.onSnapshot(snapshot => {
-            
-            snapshot.docChanges().forEach(change => {
-                if(change.type === 'added'){
-                    requests.push({...change.doc.data(), id: change.doc.id});
-                }else if(change.type === 'removed'){
-                    requests = requests.filter(doc => doc.id != change.doc.id);
-                }
-                this.requests = requests;       
-            });
+            let requests = [];
+            snapshot.forEach(doc => {
+                requests.push({...doc.data(), id: doc.id});
+              });
+            this.requests = requests;
         });
     }
-  })
+  });
 
 
 
