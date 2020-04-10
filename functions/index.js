@@ -14,3 +14,30 @@ exports.newUserSignup = functions.auth.user().onCreate(user => {
 exports.userDeleted = functions.auth.user().onDelete(user => {
     return admin.firestore().collection('users').doc(user.uid).delete();
 });
+
+// http callable function (adding a request)
+exports.addRequest = functions.https.onCall((data, context) => {
+    if(!context.auth){
+        throw new functions.https.HttpsError(
+            'unauthenticated',
+            'only authenticated users can add request'
+        );
+    }
+    if(data.text.length > 30){
+        throw new functions.https.HttpsError(
+            'invalid-argument', 
+            'request must be no more than 30 characters long'
+        );
+    }
+    return admin.firestore().collection('requests').add({
+        text: data.text,
+        upvotes: 0
+    }).then(() => {
+        return 'new request added';
+    }).catch(() => {
+        throw new functions.https.HttpsError(
+            'internal',
+            'request not added'
+        );
+    });
+});
